@@ -87,7 +87,7 @@ backend-api/
 
 1. **Model Loading**
    - Singleton pattern (loads once, cached in memory)
-   - Loads `model_weights.h5` and `classes.npy`
+   - Loads `model.weights.h5` and `classes.npy`
    - Graceful error handling for missing files
 
 2. **Signal Preprocessing**
@@ -165,7 +165,7 @@ print(f"Quality: {result['signal_quality']}")
 ## 🧠 Model Requirements
 
 **Required Files:**
-- `models/model_weights.h5` - Trained ResNet1D model (~2-10MB)
+- `models/model.weights.h5` - Trained ResNet1D model (~2-10MB)
 - `models/classes.npy` - Label encoder array (few KB)
 
 **Obtaining Model Files:**
@@ -179,7 +179,7 @@ print(f"Quality: {result['signal_quality']}")
 2. **Place in models/ directory:**
    ```bash
    unzip output.zip
-   mv model_weights.h5 models/
+   mv model.weights.h5 models/
    mv classes.npy models/
    ```
 
@@ -284,7 +284,7 @@ training-pipeline/kaggle_train.py
     ↓ (trains model on PTB-XL)
     ↓
 output/
-├── model_weights.h5  ──→  backend-api/models/model_weights.h5
+├── model.weights.h5  ──→  backend-api/models/model.weights.h5
 └── classes.npy       ──→  backend-api/models/classes.npy
 ```
 

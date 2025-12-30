@@ -45,7 +45,7 @@ ECG Image → Digitizer → Signal (1000, 12) → Classifier → Diagnosis + BPM
 
 ```bash
 # Navigate to backend-api directory
-cd /home/ubuntu/ecg-diagnosis-system/backend-api
+cd .../ecg-diagnosis-system/backend-api
 
 # Create virtual environment
 python3.10 -m venv venv
@@ -367,12 +367,6 @@ pip install tensorflow-cpu>=2.14.0
 **Error:**
 ```
 ImportError: libGL.so.1: cannot open shared object file
-```
-
-**Solution (Ubuntu/Debian):**
-```bash
-sudo apt-get update
-sudo apt-get install -y libgl1 libglib2.0-0
 ```
 
 ### Issue: Poor prediction accuracy
