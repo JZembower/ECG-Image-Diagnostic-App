@@ -37,7 +37,7 @@ ECG Image → Digitizer → Signal (1000, 12) → Classifier → Diagnosis + BPM
 
 - **Python**: 3.10 or higher
 - **Docker** (optional, for containerized deployment)
-- **Model Files**: `model_weights.h5` and `classes.npy` (see [Model Setup](#model-setup))
+- **Model Files**: `model.weights.h5` and `classes.npy` (see [Model Setup](#model-setup))
 
 ## 🚀 Quick Start
 
@@ -55,7 +55,7 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
 
 # Set up model files (see Model Setup section below)
-# Place model_weights.h5 and classes.npy in models/ directory
+# Place model.weights.h5 and classes.npy in models/ directory
 
 # Run the server
 uvicorn main:app --host 0.0.0.0 --port 8000 --reload
@@ -107,7 +107,7 @@ The backend requires trained model files from the training pipeline:
 **Option A: Train on Kaggle**
 1. Upload `training-pipeline/kaggle_train.py` to Kaggle
 2. Add PTB-XL dataset to notebook
-3. Run the script (generates `model_weights.h5` and `classes.npy`)
+3. Run the script (generates `model.weights.h5` and `classes.npy`)
 4. Download `output.zip` from Kaggle output
 
 **Option B: Use Pre-trained Model**
@@ -122,13 +122,13 @@ mkdir -p models
 # Extract and place files
 # From Kaggle output.zip:
 unzip output.zip
-mv model_weights.h5 models/
+mv model.weights.h5 models/
 mv classes.npy models/
 
 # Verify files
 ls -lh models/
 # Should show:
-# - model_weights.h5 (~2-10MB depending on architecture)
+# - model.weights.h5 (~2-10MB depending on architecture)
 # - classes.npy (~few KB)
 ```
 
@@ -276,8 +276,8 @@ Create a `.env` file (see `.env.example`):
 
 ```env
 # Model paths
-MODEL_PATH=/home/ubuntu/ecg-diagnosis-system/backend-api/models/model_weights.h5
-CLASSES_PATH=/home/ubuntu/ecg-diagnosis-system/backend-api/models/classes.npy
+MODEL_PATH=.../ecg-diagnosis-system/backend-api/models/model.weights.h5
+CLASSES_PATH=.../ecg-diagnosis-system/backend-api/models/classes.npy
 
 # Logging
 LOG_LEVEL=INFO
@@ -322,11 +322,11 @@ The digitizer assesses signal quality using multiple metrics:
 
 **Error:**
 ```
-FileNotFoundError: Model file not found: /path/to/model_weights.h5
+FileNotFoundError: Model file not found: /path/to/model.weights.h5
 ```
 
 **Solution:**
-1. Ensure `model_weights.h5` and `classes.npy` are in the `models/` directory
+1. Ensure `model.weights.h5` and `classes.npy` are in the `models/` directory
 2. Check file permissions: `chmod 644 models/*.{h5,npy}`
 3. Verify paths in `.env` or environment variables
 
@@ -431,7 +431,7 @@ backend-api/
 │   ├── digitizer.py        # Image-to-signal conversion
 │   └── classifier.py       # Model inference
 ├── models/                 # Model files (not in git)
-│   ├── model_weights.h5
+│   ├── model.weights.h5
 │   └── classes.npy
 ├── requirements.txt        # Python dependencies
 ├── Dockerfile              # Container build instructions
