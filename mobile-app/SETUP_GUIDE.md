@@ -150,7 +150,7 @@ mobile-app/
 ### Step 1: Install Dependencies
 
 ```bash
-cd /home/ubuntu/ecg-diagnosis-system/mobile-app
+cd .../ecg-diagnosis-system/mobile-app
 npm install
 ```
 
@@ -175,7 +175,7 @@ development: {
 In a separate terminal:
 
 ```bash
-cd /home/ubuntu/ecg-diagnosis-system/backend-api
+cd .../ecg-diagnosis-system/backend-api
 uvicorn main:app --reload --host 0.0.0.0 --port 8000
 ```
 
@@ -195,7 +195,7 @@ Expected response:
 ### Step 4: Start Mobile App
 
 ```bash
-cd /home/ubuntu/ecg-diagnosis-system/mobile-app
+cd .../ecg-diagnosis-system/mobile-app
 npm start
 ```
 
@@ -375,7 +375,7 @@ Then:
 
 ```bash
 # Test API service functions directly
-cd /home/ubuntu/ecg-diagnosis-system/mobile-app
+cd .../ecg-diagnosis-system/mobile-app
 
 # Check syntax
 node --check services/api.js
