@@ -476,29 +476,12 @@ formData.append('grid_size', '5');
 - **Permissions**: Only requests necessary permissions (camera, photos)
 - **Data Privacy**: Images are processed in real-time and not persisted
 
-## 📄 License
-
-This project is part of the ECG Diagnosis System. See main project README for license information.
-
 ## 🤝 Contributing
 
 1. Follow existing code style
 2. Add tests for new features
 3. Update documentation
 4. Submit pull request with clear description
-
-## 👥 Authors
-
-- **Original Contributors**: Elissa Matlock, Eugene Ho, Jonah Zembower
-- **Enhanced Mobile Integration**: AI-powered improvements
-
-## 📞 Support
-
-For issues and questions:
-1. Check this README and troubleshooting section
-2. Check backend API documentation
-3. Review console logs for error details
-4. Contact development team
 
 ## 🚧 Future Enhancements
 
