@@ -1,0 +1,51 @@
+{
+  "expo": {
+    "name": "ECG Analyzer",
+    "slug": "ecg-analyzer",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0F172A"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.ecgdiagnosis.analyzer",
+      "infoPlist": {
+        "NSCameraUsageDescription": "This app needs access to your camera to capture ECG images for analysis.",
+        "NSPhotoLibraryUsageDescription": "This app needs access to your photo library to select ECG images for analysis."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0F172A"
+      },
+      "package": "com.ecgdiagnosis.analyzer",
+      "permissions": [
+        "CAMERA",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "scheme": "ecg-analyzer",
+    "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app needs access to your photos to select ECG images.",
+          "cameraPermission": "The app needs access to your camera to capture ECG images."
+        }
+      ]
+    ]
+  }
+}

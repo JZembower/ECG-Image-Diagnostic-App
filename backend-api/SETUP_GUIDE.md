@@ -6,7 +6,7 @@ This guide will help you get the backend up and running in minutes.
 
 1. **Python 3.10+** installed
 2. **Model files** (from Kaggle training pipeline)
-   - `model_weights.h5`
+   - `model.weights.h5`
    - `classes.npy`
 
 ## 🚀 Quick Start (5 Steps)
@@ -14,7 +14,7 @@ This guide will help you get the backend up and running in minutes.
 ### Step 1: Navigate to Backend Directory
 
 ```bash
-cd /home/ubuntu/ecg-diagnosis-system/backend-api
+cd .../ecg-diagnosis-system/backend-api
 ```
 
 ### Step 2: Create Virtual Environment
@@ -39,7 +39,7 @@ Place your trained model files in the `models/` directory:
 
 ```bash
 # Example: Copy from downloads or training pipeline output
-cp /path/to/model_weights.h5 models/
+cp /path/to/model.weights.h5 models/
 cp /path/to/classes.npy models/
 
 # Verify files
@@ -47,7 +47,7 @@ ls -lh models/
 ```
 
 **Don't have model files yet?** 
-- Run the training pipeline: `/home/ubuntu/ecg-diagnosis-system/training-pipeline/kaggle_train.py` on Kaggle
+- Run the training pipeline: `.../ecg-diagnosis-system/training-pipeline/kaggle_train.py` on Kaggle
 - Or download pre-trained models (if available)
 - See [main README](../README.md) for training instructions
 
@@ -136,7 +136,7 @@ pip install -r requirements.txt
 
 **Solution**:
 1. Ensure files are in `models/` directory
-2. Check file names exactly: `model_weights.h5` and `classes.npy`
+2. Check file names exactly: `model.weights.h5` and `classes.npy`
 3. Verify file permissions: `chmod 644 models/*`
 
 ### Issue: Port already in use
@@ -150,16 +150,6 @@ uvicorn main:app --port 8001
 
 # Or kill process using port 8000
 lsof -ti:8000 | xargs kill -9
-```
-
-### Issue: OpenCV errors
-
-**Error**: `ImportError: libGL.so.1: cannot open shared object file`
-
-**Solution (Ubuntu/Debian)**:
-```bash
-sudo apt-get update
-sudo apt-get install -y libgl1 libglib2.0-0
 ```
 
 ### Issue: TensorFlow not working

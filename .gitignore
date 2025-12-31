@@ -1,0 +1,25 @@
+# Remove the virtual environment
+backend-api/venv
+
+# Remove sensitive document
+.env.example
+
+# Don't keep the pdfs
+backend-api/SETUP_GUIDE.pdf
+backend-api/PHASE3_COMPLETE.pdf
+mobile-app/SETUP_GUIDE.pdf
+
+
+# Don't include abacus info
+.abacus.donotdelete
+
+# Pychache
+backend-api/__pycache__
+backend-api/services/__pycache__
+
+# Node_modules
+mobile-app/node_modules
+
+#.expo
+mobile-app/.expo
+

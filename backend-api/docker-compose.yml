@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  ecg-backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ecg-diagnosis-backend
+    ports:
+      - "8000:8000"
+    volumes:
+      # Mount models directory so you can add/update model files without rebuilding
+      - ./models:/app/models:ro
+      # Optional: Mount for development (hot reload)
+      # - ./main.py:/app/main.py
+      # - ./services:/app/services
+    environment:
+      - LOG_LEVEL=INFO
+      - MODEL_PATH=/app/models/model_weights.h5
+      - CLASSES_PATH=/app/models/classes.npy
+      - CORS_ORIGINS=*
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+    networks:
+      - ecg-network
+
+networks:
+  ecg-network:
+    driver: bridge
