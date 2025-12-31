@@ -8,11 +8,11 @@ It's designed to run on Kaggle with the PTB-XL dataset mounted at /kaggle/input/
 DATASET SETUP ON KAGGLE:
 1. Go to https://www.kaggle.com/
 2. Create a new notebook
-3. Add dataset: Search for "PTB-XL" and add "khyeh0719/ptb-xl-dataset" or upload from PhysioNet
+3. Add dataset: Search for "PTB-XL" or upload from PhysioNet
 4. Paste this script and run!
 
 MODEL OUTPUT:
-- model_weights.h5: Best model weights
+- model.weights.h5: Best model weights
 - classes.npy: Label encoder classes (maps indices to disease names)
 - output.zip: Combined package ready for download
 
@@ -364,7 +364,7 @@ model.compile(
 # Callbacks
 callbacks = [
     ModelCheckpoint(
-        str(OUTPUT_DIR / 'model_weights.h5'),
+        str(OUTPUT_DIR / 'model.weights.h5'),
         monitor='val_accuracy',
         save_best_only=True,
         save_weights_only=True,
@@ -451,7 +451,7 @@ np.save(classes_file, label_encoder.classes_)
 print(f"✅ Saved label classes to: {classes_file}")
 
 # Model weights already saved by ModelCheckpoint callback
-weights_file = OUTPUT_DIR / 'model_weights.h5'
+weights_file = OUTPUT_DIR / 'model.weights.h5'
 print(f"✅ Model weights saved to: {weights_file}")
 
 # Create output.zip for easy download
