@@ -6,7 +6,7 @@
 [![TensorFlow](https://img.shields.io/badge/TensorFlow-2.10+-orange.svg)](https://www.tensorflow.org/)
 [![React Native](https://img.shields.io/badge/React_Native-0.72+-61DAFB.svg)](https://reactnative.dev/)
 
-![ECG App UI](mobile-app\assets\ECG App UI.png)
+![ECG App UI](mobile-app/assets/ECG%20App%20UI.png)
 
 ## 📋 Table of Contents
 
