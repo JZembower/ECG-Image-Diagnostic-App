@@ -207,9 +207,9 @@ This section guides you through training the ResNet1D model on Kaggle using the 
 
 ## 👥 Contributors
 
-- **Elissa Matlock** - Machine Learning & Model Architecture
-- **Eugene Ho** - Backend API & Integration
-- **Jonah Zembower** - Mobile App Development
+- **Elissa Matlock**
+- **Eugene Ho**
+- **Jonah Zembower**
 
 ---
 
