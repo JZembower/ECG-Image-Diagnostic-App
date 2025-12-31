@@ -5,7 +5,8 @@
 [![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/)
 [![TensorFlow](https://img.shields.io/badge/TensorFlow-2.10+-orange.svg)](https://www.tensorflow.org/)
 [![React Native](https://img.shields.io/badge/React_Native-0.72+-61DAFB.svg)](https://reactnative.dev/)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+
+![ECG App UI](C:\Users\jrzem\OneDrive\Majors\Coding Applications\Projects\CMU HealthCare\ECG-Image-Diagnostic-App\mobile-app\assets\ECG App UI.png)
 
 ## 📋 Table of Contents
 
