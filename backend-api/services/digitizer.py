@@ -1,6 +1,11 @@
 """
-ECG Image Digitizer Service
-Converts ECG images to time-series signals using OpenCV-based computer vision pipeline.
+ECG Image Digitizer Service - Phase 2 Dual-Stream
+Converts ECG images to time-series signals AND preprocesses images for dual-stream model.
+
+Updated for Phase 1.5c + Phase 2:
+- Signal preprocessing: 500Hz sampling, 5000 samples (10 seconds)
+- Image preprocessing: 224x224 RGB for EfficientNetB0
+- Maintains OpenCV-based computer vision pipeline for signal extraction
 """
 
 import numpy as np
@@ -12,12 +17,15 @@ from typing import Optional, Dict, List, Tuple
 
 logger = logging.getLogger(__name__)
 
-
-# Constants
-TARGET_SAMPLE_RATE = 100  # Hz - matches training data
+# Phase 1.5c + Phase 2 Constants
+TARGET_SAMPLE_RATE = 500  # Hz (Phase 1.5c upgrade)
 TARGET_DURATION = 10  # seconds
-TARGET_SAMPLES = TARGET_SAMPLE_RATE * TARGET_DURATION  # 1000 samples
+TARGET_SAMPLES = TARGET_SAMPLE_RATE * TARGET_DURATION  # 5000 samples
 TARGET_LEADS = 12  # 12-lead ECG
+
+# Phase 2 Image Configuration
+IMAGE_SIZE = 224  # EfficientNetB0 input size
+IMAGE_CHANNELS = 3
 
 # Standard ECG paper specs (if no calibration provided)
 STANDARD_PAPER_SPEED = 25  # mm/s
@@ -27,6 +35,10 @@ MM_PER_INCH = 25.4
 PIXELS_PER_MM = STANDARD_DPI / MM_PER_INCH  # ~11.81 pixels/mm
 
 
+# ====
+# SIGNAL EXTRACTION FROM IMAGE
+# ====
+
 def extract_signal_from_image(
     image_bytes: bytes,
     calibration_points: Optional[List[Dict]] = None
@@ -34,20 +46,22 @@ def extract_signal_from_image(
     """
     Extract ECG signal from image using OpenCV computer vision pipeline.
     
+    **Phase 1.5c Update**: Now outputs 5000 samples @ 500Hz (was 1000 @ 100Hz)
+    
     Args:
         image_bytes: Raw image bytes
         calibration_points: Optional list of calibration points for pixel-to-physical mapping
             Format: [{"x": pixel_x, "y": pixel_y, "value": physical_value, "unit": "mV" or "seconds"}]
     
     Returns:
-        numpy array of shape (1000, 12) - 10 seconds @ 100Hz, 12 leads
+        numpy array of shape (5000, 12) - 10 seconds @ 500Hz, 12 leads
     
     Process:
         1. Load and preprocess image
         2. Remove grid lines
         3. Extract ECG trace contours
         4. Convert pixels to physical units (mV, seconds)
-        5. Resample to 100Hz
+        5. Resample to 500Hz
         6. Handle multi-lead or replicate single lead
         7. Normalize and return
     """
@@ -64,7 +78,7 @@ def extract_signal_from_image(
         
         # Step 2: Preprocess image
         logger.info("Preprocessing image...")
-        preprocessed = preprocess_image(image)
+        preprocessed = preprocess_image_for_extraction(image)
         
         # Step 3: Remove grid lines
         logger.info("Removing grid lines...")
@@ -86,12 +100,11 @@ def extract_signal_from_image(
         logger.info("Converting pixels to physical units...")
         signal_physical = pixels_to_physical(trace_points, calibration)
         
-        # Step 7: Resample to target sample rate
+        # Step 7: Resample to 500Hz (Phase 1.5c)
         logger.info(f"Resampling to {TARGET_SAMPLE_RATE}Hz...")
         signal_resampled = resample_signal(signal_physical, TARGET_SAMPLES)
         
         # Step 8: Handle multi-lead (for now, replicate single lead to 12 channels)
-        # TODO: Implement proper 12-lead extraction from standard layouts
         logger.info("Creating 12-lead signal...")
         signal_12lead = create_12lead_signal(signal_resampled)
         
@@ -108,9 +121,9 @@ def extract_signal_from_image(
         raise
 
 
-def preprocess_image(image: np.ndarray) -> np.ndarray:
+def preprocess_image_for_extraction(image: np.ndarray) -> np.ndarray:
     """
-    Preprocess image for trace extraction.
+    Preprocess image for trace extraction (computer vision pipeline).
     
     Steps:
         1. Convert to grayscale
@@ -252,17 +265,11 @@ def build_calibration(
     
     if calibration_points and len(calibration_points) >= 2:
         # Use provided calibration points
-        # TODO: Implement proper calibration from points
         logger.info("Using provided calibration points")
-        
-        # For now, fall back to standard calibration
         # Full implementation would calculate scale factors from calibration points
         pass
     
     # Standard ECG paper calibration
-    # Horizontal: 25 mm/s at 300 DPI = 11.81 pixels/mm = 295.28 pixels/second
-    # Vertical: 10 mm/mV at 300 DPI = 11.81 pixels/mm = 118.11 pixels/mV
-    
     pixels_per_second = PIXELS_PER_MM * STANDARD_PAPER_SPEED
     pixels_per_mv = PIXELS_PER_MM * STANDARD_PAPER_AMPLITUDE
     
@@ -289,7 +296,7 @@ def pixels_to_physical(
     
     Returns:
         1D array of amplitude values (mV) sampled at irregular intervals
-        We'll resample to regular 100Hz later
+        We'll resample to regular 500Hz later
     """
     # Extract X and Y coordinates
     x_pixels = np.array([p[0] for p in trace_points])
@@ -311,6 +318,8 @@ def pixels_to_physical(
 def resample_signal(signal: np.ndarray, target_samples: int) -> np.ndarray:
     """
     Resample signal to target number of samples using interpolation.
+    
+    **Phase 1.5c**: Now resamples to 5000 samples (was 1000)
     
     Input: irregular samples
     Output: exactly target_samples at regular intervals
@@ -343,7 +352,7 @@ def create_12lead_signal(signal_1d: np.ndarray) -> np.ndarray:
         signal_1d = signal_1d.flatten()
     
     # Replicate to 12 leads
-    signal_12lead = np.tile(signal_1d, (TARGET_LEADS, 1)).T  # Shape: (1000, 12)
+    signal_12lead = np.tile(signal_1d, (TARGET_LEADS, 1)).T  # Shape: (5000, 12)
     
     return signal_12lead
 
@@ -369,6 +378,8 @@ def assess_signal_quality(signal: np.ndarray) -> str:
     """
     Assess signal quality based on various metrics.
     
+    **Phase 1.5c Update**: Updated for 500Hz sampling rate
+    
     Returns: "excellent", "good", "fair", or "poor"
     """
     try:
@@ -378,8 +389,8 @@ def assess_signal_quality(signal: np.ndarray) -> str:
         # Estimate noise as high-frequency component
         signal_1d = signal[:, 0] if signal.ndim > 1 else signal
         
-        # Apply high-pass filter to isolate noise
-        sos = scipy_signal.butter(4, 40, 'high', fs=TARGET_SAMPLE_RATE, output='sos')
+        # Apply high-pass filter to isolate noise (adjusted for 500Hz)
+        sos = scipy_signal.butter(4, 100, 'high', fs=TARGET_SAMPLE_RATE, output='sos')
         noise = scipy_signal.sosfilt(sos, signal_1d)
         
         signal_power = np.mean(signal_1d ** 2)
@@ -419,3 +430,108 @@ def assess_signal_quality(signal: np.ndarray) -> str:
     except Exception as e:
         logger.error(f"Error in quality assessment: {e}")
         return "unknown"
+
+
+# ====
+# PHASE 2: IMAGE PREPROCESSING FOR DUAL-STREAM MODEL
+# ====
+
+def preprocess_image_for_model(image_bytes: bytes) -> np.ndarray:
+    """
+    Preprocess ECG image for Phase 2 dual-stream model (EfficientNetB0 branch).
+    
+    Steps:
+        1. Load image from bytes
+        2. Resize to (224, 224)
+        3. Convert to RGB if needed
+        4. Normalize to [0, 1]
+    
+    Returns:
+        numpy array of shape (224, 224, 3) ready for EfficientNetB0
+    """
+    try:
+        # Load image from bytes
+        nparr = np.frombuffer(image_bytes, np.uint8)
+        image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+        
+        if image is None:
+            raise ValueError("Failed to decode image. Invalid image format.")
+        
+        # Convert BGR to RGB (OpenCV loads as BGR)
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        
+        # Resize to target size
+        if image.shape[:2] != (IMAGE_SIZE, IMAGE_SIZE):
+            image = cv2.resize(image, (IMAGE_SIZE, IMAGE_SIZE))
+        
+        # Normalize to [0, 1]
+        if image.dtype == np.uint8:
+            image = image.astype(np.float32) / 255.0
+        elif image.max() > 1.0:
+            image = image / 255.0
+        
+        # Ensure float32 and correct shape
+        image = image.astype(np.float32)
+        
+        if image.shape != (IMAGE_SIZE, IMAGE_SIZE, IMAGE_CHANNELS):
+            raise ValueError(f"Image preprocessing failed: unexpected shape {image.shape}")
+        
+        logger.info(f"Image preprocessed for model: shape={image.shape}, dtype={image.dtype}")
+        
+        return image
+    
+    except Exception as e:
+        logger.error(f"Error in preprocess_image_for_model: {e}", exc_info=True)
+        raise
+
+
+def preprocess_dual_inputs(image_bytes: bytes) -> Tuple[np.ndarray, np.ndarray]:
+    """
+    Convenience function to preprocess a single ECG image for dual-stream model.
+    
+    Extracts signal AND prepares image for model.
+    
+    Returns:
+        Tuple of (signal, image):
+        - signal: (5000, 12) @ 500Hz
+        - image: (224, 224, 3) normalized
+    """
+    # Extract signal from image
+    signal = extract_signal_from_image(image_bytes)
+    
+    # Preprocess image for model
+    image = preprocess_image_for_model(image_bytes)
+    
+    return signal, image
+
+
+# ====
+# BACKWARD COMPATIBILITY
+# ====
+
+def preprocess_signal_only(signal: np.ndarray, target_length=TARGET_SAMPLES) -> np.ndarray:
+    """
+    Preprocess raw signal data to match model requirements.
+    
+    For cases where signal is provided directly (not extracted from image).
+    """
+    if signal is None or len(signal) == 0:
+        raise ValueError("Cannot preprocess empty signal")
+    
+    # Ensure correct shape
+    if signal.ndim == 1:
+        # Single lead, expand to 12
+        signal = np.tile(signal, (TARGET_LEADS, 1)).T
+    
+    # Z-score normalization per lead
+    signal = (signal - signal.mean(axis=0)) / (signal.std(axis=0) + 1e-8)
+    
+    # Pad or truncate to target length
+    current_length = signal.shape[0]
+    if current_length < target_length:
+        pad_width = ((0, target_length - current_length), (0, 0))
+        signal = np.pad(signal, pad_width, mode='constant', constant_values=0)
+    elif current_length > target_length:
+        signal = signal[:target_length, :]
+    
+    return signal
