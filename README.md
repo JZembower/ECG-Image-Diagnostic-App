@@ -19,7 +19,7 @@ This project implements an end-to-end ECG arrhythmia detection system that:
 3. **Classifies** 14 types of cardiac arrhythmias using deep learning
 4. **Provides** instant diagnostic insights on mobile devices
 
-The highest classification accuracy achieved was 85%. With traditionally high predictability in most arrhythmias. Less frequent data is available in smaller arrhythmia types and were unable to be accurate. Future versions will look to improve these statistics.
+The highest classification accuracy achieved was 87%. With traditionally high predictability in most arrhythmias. Less frequent data is available in smaller arrhythmia types and were unable to be accurate. Future versions will look to improve these statistics.
 
 ### Key Features
 
